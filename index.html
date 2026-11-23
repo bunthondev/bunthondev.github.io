@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bunthondev — Native macOS Utility Apps</title>
+    <meta
+      name="description"
+      content="Useful, lightweight, open-source macOS utility apps built by Bunthon Mao. Explore RunDock (runtime & local service manager) and DeepClean (safe developer disk cleaner)."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bunthondev.github.io/" />
+    <meta property="og:title" content="bunthondev — Native macOS Utility Apps" />
+    <meta
+      property="og:description"
+      content="Small, fast, open-source utility apps for macOS: RunDock and DeepClean."
+    />
+    <meta property="og:image" content="https://bunthondev.github.io/assets/rundock-preview.png" />
+    <meta name="theme-color" content="#f8fafc" id="meta-theme-color" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("bunthondev-theme");
+          const prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const theme =
+            saved === "dark" || saved === "light"
+              ? saved
+              : prefersDark
+                ? "dark"
+                : "light";
+          document.documentElement.setAttribute("data-theme", theme);
+          const meta = document.getElementById("meta-theme-color");
+          if (meta) meta.setAttribute("content", theme === "dark" ? "#080b11" : "#f8fafc");
+        } catch {
+          // Ignore storage restrictions
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#apps">Skip to apps</a>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a href="#" class="brand" aria-label="bunthondev home">
+          <img
+            src="./assets/favicon.svg"
+            alt=""
+            width="28"
+            height="28"
+            class="brand-mark"
+          />
+          <span class="brand-name">bunthondev</span>
+          <span class="brand-slash">/ utilities</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="#apps">Apps</a>
+          <a href="#install">Quick Install</a>
+          <a href="#principles">Principles</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button
+            type="button"
+            class="cmd-trigger"
+            id="cmd-open"
+            aria-label="Open quick navigation palette"
+            aria-haspopup="dialog"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <span class="cmd-label">Jump to app</span>
+            <kbd id="cmd-kbd">⌘K</kbd>
+          </button>
+
+          <button
+            type="button"
+            class="icon-btn"
+            id="theme-toggle"
+            aria-label="Toggle color theme"
+            title="Switch light / dark theme"
+          >
+            <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2" />
+              <path d="M12 20v2" />
+              <path d="m4.93 4.93 1.41 1.41" />
+              <path d="m17.66 17.66 1.41 1.41" />
+              <path d="M2 12h2" />
+              <path d="M20 12h2" />
+              <path d="m6.34 17.66-1.41 1.41" />
+              <path d="m19.07 4.93-1.41 1.41" />
+            </svg>
+            <svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
+          </button>
+
+          <a
+            href="https://github.com/bunthondev"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-sm btn-ghost"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 1.5C6.2 1.5 1.5 6.2 1.5 12c0 4.64 3.01 8.58 7.18 9.97.53.1.72-.23.72-.5 0-.25-.01-.91-.01-1.78-2.92.63-3.54-1.41-3.54-1.41-.48-1.21-1.17-1.53-1.17-1.53-.95-.65.07-.64.07-.64 1.05.07 1.61 1.08 1.61 1.08.94 1.6 2.46 1.14 3.06.87.09-.68.37-1.14.67-1.4-2.33-.26-4.78-1.17-4.78-5.19 0-1.15.41-2.09 1.08-2.82-.11-.27-.47-1.34.1-2.79 0 0 .88-.28 2.89 1.08a10.05 10.05 0 0 1 5.26 0c2.01-1.36 2.89-1.08 2.89-1.08.57 1.45.21 2.52.1 2.79.67.73 1.08 1.67 1.08 2.82 0 4.03-2.46 4.92-4.8 5.18.38.33.71.97.71 1.95 0 1.41-.01 2.54-.01 2.89 0 .28.19.61.73.5A10.51 10.51 0 0 0 22.5 12c0-5.8-4.7-10.5-10.5-10.5Z" />
+            </svg>
+            <span>GitHub</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero + Instant App Navigation Dock -->
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="eyebrow">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>Open-Source macOS Utilities · Built by Bunthon Mao</span>
+          </div>
+
+          <h1>Useful utility apps, crafted for everyday Mac work.</h1>
+          <p class="hero-sub">
+            Fast, focused, native tools designed to keep your development runtimes organized and your
+            disk clutter-free — free and open source for everyone to use.
+          </p>
+
+          <!-- Instant App Launcher Dock -->
+          <div class="dock-wrap" aria-label="Direct app navigation">
+            <div class="dock-grid">
+              <a
+                href="https://bunthondev.github.io/RunDock/"
+                class="dock-tile"
+                data-app-link="rundock"
+              >
+                <img
+                  src="./assets/rundock-icon.png"
+                  alt="RunDock icon"
+                  width="48"
+                  height="48"
+                  class="dock-icon"
+                />
+                <div class="dock-meta">
+                  <div class="dock-title-row">
+                    <span class="dock-name">RunDock</span>
+                    <span class="ver-pill" data-release-tag="rundock">v0.1.0</span>
+                  </div>
+                  <span class="dock-desc">Runtimes, PATH shims &amp; local services</span>
+                </div>
+                <span class="dock-arrow" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 17 17 7" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                </span>
+              </a>
+
+              <a
+                href="https://bunthondev.github.io/deep-clean/"
+                class="dock-tile"
+                data-app-link="deepclean"
+              >
+                <img
+                  src="./assets/deepclean-icon.png"
+                  alt="DeepClean icon"
+                  width="48"
+                  height="48"
+                  class="dock-icon"
+                />
+                <div class="dock-meta">
+                  <div class="dock-title-row">
+                    <span class="dock-name">DeepClean</span>
+                    <span class="ver-pill" data-release-tag="deepclean">v0.2.8</span>
+                  </div>
+                  <span class="dock-desc">Safe developer cache &amp; disk cleaner</span>
+                </div>
+                <span class="dock-arrow" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 17 17 7" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                </span>
+              </a>
+            </div>
+            <p class="dock-caption">
+              Select an app above to visit its dedicated website, or explore previews &amp; quick install below.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Apps Navigation & Showcase -->
+      <section class="section" id="apps">
+        <div class="container">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Utility Suite</p>
+              <h2>Explore the apps</h2>
+            </div>
+            <div class="filter-bar" role="tablist" aria-label="Filter apps by category">
+              <button type="button" class="filter-pill active" role="tab" aria-selected="true" data-filter="all">
+                All Apps <span class="filter-count">2</span>
+              </button>
+              <button type="button" class="filter-pill" role="tab" aria-selected="false" data-filter="dev-env">
+                Dev Environment
+              </button>
+              <button type="button" class="filter-pill" role="tab" aria-selected="false" data-filter="system">
+                Disk &amp; System
+              </button>
+            </div>
+          </div>
+
+          <div class="apps-grid">
+            <!-- App 1: RunDock -->
+            <article class="app-card" data-category="dev-env">
+              <a
+                href="https://bunthondev.github.io/RunDock/"
+                class="app-preview app-preview-dark"
+                aria-label="Visit RunDock website"
+              >
+                <img
+                  src="./assets/rundock-preview.png"
+                  alt="RunDock desktop overview showing managed runtimes, PATH shims, and running local services"
+                  width="1440"
+                  height="922"
+                  loading="eager"
+                />
+                <span class="preview-badge">
+                  <span>bunthondev.github.io/RunDock</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                </span>
+              </a>
+
+              <div class="app-body">
+                <div class="app-head">
+                  <div class="app-identity">
+                    <img
+                      src="./assets/rundock-icon.png"
+                      alt="RunDock app icon"
+                      width="52"
+                      height="52"
+                      class="app-icon"
+                    />
+                    <div>
+                      <div class="app-title-row">
+                        <h3>RunDock</h3>
+                        <span class="cat-badge">Dev Environment</span>
+                      </div>
+                      <p class="app-release-line">
+                        <span class="ver-pill" data-release-tag="rundock">v0.1.0</span>
+                        <span class="release-sep">·</span>
+                        <span data-release-meta="rundock">Rust + Tauri v2 · Apple Silicon</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="app-tagline">
+                  One fast Rust dock for every runtime &amp; local service.
+                </p>
+                <p class="app-desc">
+                  Manage multiple versions of Node.js, Python, PHP, Go, Bun, Deno, Java, package managers,
+                  and local PostgreSQL, Caddy, Mailpit &amp; Nginx services from a single desktop app, macOS
+                  menu bar switcher, and PATH shim CLI.
+                </p>
+
+                <ul class="feature-list">
+                  <li>
+                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span>Auto-discovers Homebrew, NVM, Proto, Corepack &amp; Postgres.app</span>
+                  </li>
+                  <li>
+                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span>Per-project auto-switching via <code>.nvmrc</code>, <code>.tool-versions</code> &amp; <code>.rundock.toml</code></span>
+                  </li>
+                  <li>
+                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span>Live listening port &amp; process monitor plus built-in command cheatsheets</span>
+                  </li>
+                </ul>
+
+                <div class="spec-row">
+                  <span class="spec-chip">15 Runtimes &amp; Services</span>
+                  <span class="spec-chip">Menu Bar + CLI</span>
+                  <span class="spec-chip">MIT License</span>
+                </div>
+
+                <div class="app-actions">
+                  <a
+                    href="https://bunthondev.github.io/RunDock/"
+                    class="btn btn-primary"
+                  >
+                    <span>Visit RunDock</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </a>
+                  <a
+                    href="https://github.com/bunthondev/RunDock/releases/latest"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-ghost"
+                    data-download-btn="rundock"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" x2="12" y1="15" y2="3" />
+                    </svg>
+                    <span data-download-label="rundock">Download DMG</span>
+                  </a>
+                  <a
+                    href="https://github.com/bunthondev/RunDock"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-icon-only btn-ghost"
+                    aria-label="RunDock GitHub repository"
+                    title="View RunDock source on GitHub"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M12 1.5C6.2 1.5 1.5 6.2 1.5 12c0 4.64 3.01 8.58 7.18 9.97.53.1.72-.23.72-.5 0-.25-.01-.91-.01-1.78-2.92.63-3.54-1.41-3.54-1.41-.48-1.21-1.17-1.53-1.17-1.53-.95-.65.07-.64.07-.64 1.05.07 1.61 1.08 1.61 1.08.94 1.6 2.46 1.14 3.06.87.09-.68.37-1.14.67-1.4-2.33-.26-4.78-1.17-4.78-5.19 0-1.15.41-2.09 1.08-2.82-.11-.27-.47-1.34.1-2.79 0 0 .88-.28 2.89 1.08a10.05 10.05 0 0 1 5.26 0c2.01-1.36 2.89-1.08 2.89-1.08.57 1.45.21 2.52.1 2.79.67.73 1.08 1.67 1.08 2.82 0 4.03-2.46 4.92-4.8 5.18.38.33.71.97.71 1.95 0 1.41-.01 2.54-.01 2.89 0 .28.19.61.73.5A10.51 10.51 0 0 0 22.5 12c0-5.8-4.7-10.5-10.5-10.5Z" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- App 2: DeepClean -->
+            <article class="app-card" data-category="system">
+              <a
+                href="https://bunthondev.github.io/deep-clean/"
+                class="app-preview app-preview-adaptive"
+                aria-label="Visit DeepClean website"
+              >
+                <img
+                  src="./assets/deepclean-preview-light.png"
+                  alt="DeepClean for Mac light mode window showing disk usage, safety tiers, and Xcode DerivedData inspection"
+                  width="1440"
+                  height="841"
+                  class="preview-light"
+                  loading="eager"
+                />
+                <img
+                  src="./assets/deepclean-preview-dark.png"
+                  alt="DeepClean for Mac dark mode window showing disk usage, safety tiers, and Xcode DerivedData inspection"
+                  width="1368"
+                  height="799"
+                  class="preview-dark"
+                  loading="eager"
+                />
+                <span class="preview-badge">
+                  <span>bunthondev.github.io/deep-clean</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                </span>
+              </a>
+
+              <div class="app-body">
+                <div class="app-head">
+                  <div class="app-identity">
+                    <img
+                      src="./assets/deepclean-icon.png"
+                      alt="DeepClean app icon"
+                      width="52"
+                      height="52"
+                      class="app-icon"
+                    />
+                    <div>
+                      <div class="app-title-row">
+                        <h3>DeepClean</h3>
+                        <span class="cat-badge">Disk &amp; System</span>
+                      </div>
+                      <p class="app-release-line">
+                        <span class="ver-pill" data-release-tag="deepclean">v0.2.8</span>
+                        <span class="release-sep">·</span>
+                        <span data-release-meta="deepclean">Swift + SwiftUI · Under 3 MB</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="app-tagline">
+                  Find the junk on your Mac, understand it, trash it safely.
+                </p>
+                <p class="app-desc">
+                  A small native macOS app with zero third-party dependencies that uncovers developer caches,
+                  <code>node_modules</code>, build output, simulators, and AI tool caches — explaining each item clearly
+                  before moving confirmed items to Trash.
+                </p>
+
+                <ul class="feature-list">
+                  <li>
+                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span>Read-only scan categorized into Safe to delete, Review first &amp; Personal data</span>
+                  </li>
+                  <li>
+                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span>Always moves confirmed selections to Trash — fully recoverable</span>
+                  </li>
+                  <li>
+                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span>Includes storage, CPU, memory, battery, processes &amp; app leftover viewer</span>
+                  </li>
+                </ul>
+
+                <div class="spec-row">
+                  <span class="spec-chip">macOS 14 Sonoma+</span>
+                  <span class="spec-chip">Homebrew Cask</span>
+                  <span class="spec-chip">Zero Dependencies</span>
+                </div>
+
+                <div class="app-actions">
+                  <a
+                    href="https://bunthondev.github.io/deep-clean/"
+                    class="btn btn-primary"
+                  >
+                    <span>Visit DeepClean</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </a>
+                  <a
+                    href="https://github.com/bunthondev/deep-clean/releases/latest"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-ghost"
+                    data-download-btn="deepclean"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" x2="12" y1="15" y2="3" />
+                    </svg>
+                    <span data-download-label="deepclean">Download ZIP</span>
+                  </a>
+                  <a
+                    href="https://github.com/bunthondev/deep-clean"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-icon-only btn-ghost"
+                    aria-label="DeepClean GitHub repository"
+                    title="View DeepClean source on GitHub"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M12 1.5C6.2 1.5 1.5 6.2 1.5 12c0 4.64 3.01 8.58 7.18 9.97.53.1.72-.23.72-.5 0-.25-.01-.91-.01-1.78-2.92.63-3.54-1.41-3.54-1.41-.48-1.21-1.17-1.53-1.17-1.53-.95-.65.07-.64.07-.64 1.05.07 1.61 1.08 1.61 1.08.94 1.6 2.46 1.14 3.06.87.09-.68.37-1.14.67-1.4-2.33-.26-4.78-1.17-4.78-5.19 0-1.15.41-2.09 1.08-2.82-.11-.27-.47-1.34.1-2.79 0 0 .88-.28 2.89 1.08a10.05 10.05 0 0 1 5.26 0c2.01-1.36 2.89-1.08 2.89-1.08.57 1.45.21 2.52.1 2.79.67.73 1.08 1.67 1.08 2.82 0 4.03-2.46 4.92-4.8 5.18.38.33.71.97.71 1.95 0 1.41-.01 2.54-.01 2.89 0 .28.19.61.73.5A10.51 10.51 0 0 0 22.5 12c0-5.8-4.7-10.5-10.5-10.5Z" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Install Strip -->
+      <section class="section section-tinted" id="install">
+        <div class="container">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">Quick Start</p>
+              <h2>Install in seconds</h2>
+            </div>
+            <p class="section-sub">
+              Grab signed-free open-source builds directly from GitHub Releases or install via Homebrew.
+            </p>
+          </div>
+
+          <div class="install-grid">
+            <div class="install-card">
+              <div class="install-head">
+                <div class="install-brand">
+                  <img src="./assets/deepclean-icon.png" alt="" width="24" height="24" class="mini-icon" />
+                  <h3>DeepClean via Homebrew</h3>
+                </div>
+                <a href="https://bunthondev.github.io/deep-clean/" class="text-link">Docs →</a>
+              </div>
+              <div class="code-line">
+                <pre><code id="cmd-deepclean">brew install --cask bunthondev/tap/deepclean</code></pre>
+                <button type="button" class="copy-btn" data-copy-target="cmd-deepclean">Copy</button>
+              </div>
+              <p class="install-note">
+                Clears Gatekeeper quarantine automatically. Update anytime with <code>brew upgrade --cask deepclean</code>.
+              </p>
+            </div>
+
+            <div class="install-card">
+              <div class="install-head">
+                <div class="install-brand">
+                  <img src="./assets/rundock-icon.png" alt="" width="24" height="24" class="mini-icon" />
+                  <h3>RunDock Desktop &amp; CLI Shims</h3>
+                </div>
+                <a href="https://bunthondev.github.io/RunDock/" class="text-link">Docs →</a>
+              </div>
+              <div class="code-line">
+                <pre><code id="cmd-rundock">rundock setup --shell &amp;&amp; source ~/.zshrc</code></pre>
+                <button type="button" class="copy-btn" data-copy-target="cmd-rundock">Copy</button>
+              </div>
+              <p class="install-note">
+                Install the Apple Silicon <code>.dmg</code> or CLI binary from
+                <a href="https://github.com/bunthondev/RunDock/releases/latest" target="_blank" rel="noopener noreferrer" class="inline-link">GitHub Releases</a>,
+                then activate PATH shims in one command.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shared Principles -->
+      <section class="section" id="principles">
+        <div class="container">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">Design Philosophy</p>
+              <h2>Small tools that respect your machine</h2>
+            </div>
+          </div>
+
+          <div class="principles-grid">
+            <article class="principle-card">
+              <div class="principle-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </div>
+              <h3>Native &amp; Lightweight</h3>
+              <p>
+                Built with Rust + Tauri and native SwiftUI instead of heavy background wrappers. Fast
+                startup, tiny binaries, and low memory overhead.
+              </p>
+            </article>
+
+            <article class="principle-card">
+              <div class="principle-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+              </div>
+              <h3>Transparent &amp; Safe</h3>
+              <p>
+                Read-only discovery, clear plain-language explanations, and recoverable Trash actions —
+                no opaque magic or silent system changes.
+              </p>
+            </article>
+
+            <article class="principle-card">
+              <div class="principle-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </div>
+              <h3>Free &amp; Open Source</h3>
+              <p>
+                Published openly on GitHub with public releases and issue trackers so anyone can inspect
+                the code, suggest improvements, or use every app freely.
+              </p>
+            </article>
+          </div>
+
+          <div class="more-banner">
+            <div class="more-copy">
+              <strong>More utility apps on the way.</strong>
+              <span>Follow <code>@bunthondev</code> on GitHub for new releases, updates, and upcoming macOS tools.</span>
+            </div>
+            <a
+              href="https://github.com/bunthondev"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-sm btn-ghost"
+            >
+              Follow @bunthondev →
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <img src="./assets/favicon.svg" alt="" width="20" height="20" class="footer-mark" />
+          <span>Bunthon Mao · Open-source macOS utilities</span>
+        </div>
+        <nav class="footer-links" aria-label="Footer navigation">
+          <a href="https://bunthondev.github.io/RunDock/">RunDock</a>
+          <a href="https://bunthondev.github.io/deep-clean/">DeepClean</a>
+          <a href="https://github.com/bunthondev/homebrew-tap" target="_blank" rel="noopener noreferrer">Homebrew Tap</a>
+          <a href="https://github.com/bunthondev" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </nav>
+      </div>
+    </footer>
+
+    <!-- Command Palette / Quick App Navigator (⌘K) -->
+    <div class="cmd-overlay" id="cmd-overlay" hidden>
+      <div class="cmd-dialog" role="dialog" aria-modal="true" aria-labelledby="cmd-dialog-title">
+        <div class="cmd-search-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <input
+            type="text"
+            id="cmd-input"
+            class="cmd-input"
+            placeholder="Jump to RunDock, DeepClean, releases, or commands..."
+            autocomplete="off"
+            aria-labelledby="cmd-dialog-title"
+          />
+          <span id="cmd-dialog-title" class="sr-only">Quick app navigation</span>
+          <button type="button" class="cmd-esc" id="cmd-close" aria-label="Close palette">ESC</button>
+        </div>
+        <div class="cmd-list" id="cmd-list" role="listbox"></div>
+        <div class="cmd-foot">
+          <span><kbd>↑</kbd> <kbd>↓</kbd> Navigate</span>
+          <span><kbd>↵</kbd> Open</span>
+          <span><kbd>ESC</kbd> Close</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
